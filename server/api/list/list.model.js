@@ -1,10 +1,26 @@
-'use strict';
+"use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Card = require("../card/card.model");
+const listSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      require: true
+    },
+    position: {
+      type: Number,
+      default: 0
+    },
+    cards:[{type:Schema.Types.ObjectId, ref:"Card"}],
+  },
+  {
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at"
+    }
+  }
+);
 
-const listSchema = new mongoose.Schema({
-  // Lesson 2: Implement the List Model
-});
-
-module.exports = mongoose.model('List', listSchema);
+module.exports = mongoose.model("List", listSchema);
