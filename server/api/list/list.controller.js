@@ -5,29 +5,32 @@ const cardModel = require("../card/card.model");
 let ObjectId = require("mongoose").Types.ObjectId;
 
 exports.getLists = function(req, res, next) {
+  listModel
+    .find()
+    .populate("cards")
+    .then(list => res.json(list))
+    .catch();
+  //   listModel.find({}, function(err, lists) {
+  //     if (err) {
+  //       return res.json(err);
+  //     }
 
-listModel.find().populate('cards').then( list => res.json(list)).catch()
-//   listModel.find({}, function(err, lists) {
-//     if (err) {
-//       return res.json(err);
-//     }
+  //     return new Promise((resolve, reject) => {
 
-//     return new Promise((resolve, reject) => {
-  
-//       listModel
-//         .populate('cards')
-//         .then(_lists => {
-         
-//           _.forEach(lists, list => {
-//             list.cards = _.orderBy(list.cards, ["position", "title", "_id"]);
-//           });
-//           return res.json(lists);
-//         })
-//         .catch(error =>
-//           res.status(400).json({ message: "impossible to retrieve cards" })
-//         );
-//     });
-//   });
+  //       listModel
+  //         .populate('cards')
+  //         .then(_lists => {
+
+  //           _.forEach(lists, list => {
+  //             list.cards = _.orderBy(list.cards, ["position", "title", "_id"]);
+  //           });
+  //           return res.json(lists);
+  //         })
+  //         .catch(error =>
+  //           res.status(400).json({ message: "impossible to retrieve cards" })
+  //         );
+  //     });
+  //   });
 };
 
 exports.createList = function(req, res, next) {
@@ -78,16 +81,13 @@ exports.removeList = function(req, res) {
   cardModel
     .remove(query)
     .then(() => {
-      console.log("FIND");
+      listModel.findByIdAndRemove(req.params.id, function(err) {
+        if (err) {
+          res.json({ message: "impossible to remove the List", error: err });
+        }
+    
+        res.json({ message: "List removed successfully" });
+      });
     })
-    .catch(err => console.log);
+    .catch(err => console.log(err));
 };
-
-//   listModel.findByIdAndRemove(req.params.id, function(err) {
-//     if (err) {
-//       res.json({ message: "impossible to remove the List", error: err });
-//     }
-
-//     res.json({ message: "List removed successfully" });
-//   });
-// };
